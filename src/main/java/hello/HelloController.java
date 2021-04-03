@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 // import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 // import com.fasterxml.jackson.core.JsonProcessingException;
 // import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 // @RestController
@@ -55,6 +57,9 @@ public class HelloController {
     private String test_url = "https://jsonplaceholder.typicode.com/todos/1";
     private String aircraft_url = "https://opensky-network.org/api/flights/aircraft?icao24=3c675a&begin=1517184000&end=1517270400";
 
+    private String states__file_path = "json_data/states.json";
+    private String aircraft_file_path = "json_data/aircrafts.json";
+
     @GetMapping("/states")
     public String states(Model model) throws IOException
     {
@@ -70,6 +75,9 @@ public class HelloController {
             logger.debug(state.toString());
             states_str.add(state.toString());
         }
+
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(states__file_path), state_info);
 
         model.addAttribute("eventName", "States");
         return "home";
@@ -89,9 +97,51 @@ public class HelloController {
         {
             aircrafts_str.add(aircraft.toString());
         }
+        logger.debug(aircrafts);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(aircraft_file_path), aircrafts);
+
+        model.addAttribute("eventName", "Welelel");
+        return "home";
+    }
+
+    @GetMapping("/aircrafts_file")
+    public String aircraft_file(Model model) throws IOException
+    {
+        Object objects = mapper.readValue(new File("Test.json"), Object.class);
+
+        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
+        List<String> aircrafts_str = new ArrayList<String>();
+        for(Aircraft aircraft : aircrafts)
+        {
+            aircrafts_str.add(aircraft.toString());
+        }
         
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(aircraft_file_path), aircrafts);
 
         model.addAttribute("eventName", "Aircrafts");
+        return "home";
+    }
+
+    @GetMapping("/states_file")
+    public String states_files(Model model) throws IOException
+    {
+        
+        Object objects = mapper.readValue(new File("Test_states.json"), Object.class);
+
+        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
+        List<String> states_str = new ArrayList<String>();
+        for(State state : state_info.getStateObj())
+        {
+            logger.debug(state);
+            states_str.add(state.toString());
+        }
+
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(states__file_path), state_info);
+
+        model.addAttribute("eventName", "States");
         return "home";
     }
     

@@ -1,5 +1,9 @@
 package hello;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 public class Aircraft {
     private String icao24;
     private int firstSeen;
@@ -87,6 +91,7 @@ public class Aircraft {
         this.arrivalAirportCandidatesCount = arrivalAirportCandidatesCount;
     }
 
+    @JsonIgnore
     public String getAircraft()
     {
         return "I am an aircraft";
