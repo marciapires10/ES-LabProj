@@ -67,7 +67,7 @@ public class HelloController {
     private String aircraft_file_path = "json_data/aircrafts.json";
     private String coordinates_file_path = "json_data/coordinates.json";
 
-    @GetMapping("/states")
+    @GetMapping("/")
     public String states(Model model) throws IOException
     {
         
@@ -98,46 +98,6 @@ public class HelloController {
         return "index";
     }
 
-    @GetMapping("/aircrafts")
-    public String aircraft(Model model) throws IOException
-    {
-       
-        ResponseEntity<Object[]> response = parsingObject.parseObjects(aircraft_url);
-        Object objects = response.getBody();
-
-        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
-        List<String> aircrafts_str = new ArrayList<String>();
-        for(Aircraft aircraft : aircrafts)
-        {
-            aircrafts_str.add(aircraft.toString());
-        }
-        logger.debug(aircrafts);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File(aircraft_file_path), aircrafts);
-
-        model.addAttribute("eventName", "Welelel");
-        return "home";
-    }
-
-    @GetMapping("/aircrafts_file")
-    public String aircraft_file(Model model) throws IOException
-    {
-        Object objects = mapper.readValue(new File(aircraft_file_path), Object.class);
-
-        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
-        List<String> aircrafts_str = new ArrayList<String>();
-        for(Aircraft aircraft : aircrafts)
-        {
-            aircrafts_str.add(aircraft.toString());
-        }
-        
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File(aircraft_file_path), aircrafts);
-
-        model.addAttribute("eventName", "Aircrafts");
-        return "home";
-    }
-
     @GetMapping("/states_file")
     public String states_files(Model model) throws IOException
     {
@@ -159,12 +119,55 @@ public class HelloController {
         return "home";
     }
     
+    @GetMapping("/aircrafts")
+    @ResponseBody
+    public String aircraft(Model model) throws IOException
+    {
+       
+        ResponseEntity<Object[]> response = parsingObject.parseObjects(aircraft_url);
+        Object objects = response.getBody();
+
+        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
+        List<String> aircrafts_str = new ArrayList<String>();
+        for(Aircraft aircraft : aircrafts)
+        {
+            aircrafts_str.add(aircraft.toString());
+        }
+        logger.debug(aircrafts);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(aircraft_file_path), aircrafts);
+
+        model.addAttribute("eventName", "Welelel");
+        return "home";
+    }
+
+    @GetMapping("/aircrafts_file")
+    @ResponseBody
+    public String aircraft_file(Model model) throws IOException
+    {
+        Object objects = mapper.readValue(new File(aircraft_file_path), Object.class);
+
+        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
+        List<String> aircrafts_str = new ArrayList<String>();
+        for(Aircraft aircraft : aircrafts)
+        {
+            aircrafts_str.add(aircraft.toString());
+        }
+        
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.writeValue(new File(aircraft_file_path), aircrafts);
+
+        model.addAttribute("eventName", "Aircrafts");
+        return "home";
+    }
+    
     @GetMapping("/coordinates")
     @ResponseBody
-    public List<Coordinates> coordinates_file() throws JsonParseException, JsonMappingException, IOException
+    public List<State> coordinates_file() throws JsonParseException, JsonMappingException, IOException
     {
-        Object objects = mapper.readValue(new File(coordinates_file_path), Object.class);
-        List<Coordinates> coordinates = mapper.convertValue(objects, List.class);
-        return coordinates;
+        Object objects = mapper.readValue(new File(states__file_path), Object.class);
+        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
+
+        return state_info.getStateObj();
     }
 }

@@ -83,14 +83,18 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">ICAO</th>
-                            <th scope="col">x</th>
+                            <th scope="col">Origin Country</th>
+                            <th scope="col">Latitude</th>
+                            <th scope="col">Longitude</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(entry, i) in list" :key="i">
                             <th scope="row">{{ ++i }}</th>
                             <td>{{ entry.ICAO }}</td>
-                            <td>{{ entry.x }}</td>
+                            <td>{{ entry.country }}</td>
+                            <td>{{ entry.latitude }}</td>
+                            <td>{{ entry.longitude }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -222,42 +226,44 @@
 
                     let scope = this.map;
 
-                    this.fetchCoords();
+                    this.fetchCoords(scope);
 
                     var list = [];
                     for (var i = 0; i < this.coords.length; i ++){
                         list.push([this.y[i]['longitude'], this.y[i]['latitude']]);
                     }
-
-                    console.log(list);
                     
-                    // this.coords.features.forEach(function(marker) {
-                    //     var el = document.createElement('div');
-                    //     el.className = 'marker';
-                    //     el.style.backgroundImage = 'url(assets/plane.png)';
-                    //     el.style.width = '30px';
-                    //     el.style.height = '30px';
-                    //     el.style.backgroundSize = '100%';
-                    //     console.log("ola??");
-
-                    //     new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(scope);
-
-                    //     console.log("CHEGOU?");
-                    // });
                     
                 },
                 methods: {
-                    fetchCoords(){
-                        axios.get('/coordinates').then(function(response){
-                            this.coords = response.data;
-                        }.bind(this));
-                    }
+                    fetchCoords(scope){
+                    console.log("Axious")
+                    axios.get("/coordinates").then(function(response){
+                        var coords_list = response.data;
+                        for(var i = 0; i < coords_list.length; i ++)
+                        {
+                            this.coords.push([coords_list[i]['longitude'], coords_list[i]['latitude']])
+                        }
+                        var c = this.coords
+                        var index = 0
+                        this.coords.forEach(function(marker) {
+                            var el = document.createElement('div');
+                            el.className = 'marker';
+                            el.style.backgroundImage = 'url(assets/plane.png)';
+                            el.style.width = '30px';
+                            el.style.height = '30px';
+                            el.style.backgroundSize = '100%';
+                            new mapboxgl.Marker(el).setLngLat(c[index]).addTo(scope);
+                            index += 1
+                    });
+                    }.bind(this));
+                }
                 }
             });
     
             var flights_table = new Vue({
                 el: "#table-flights",
-                data: () => ({ICAO: "", x: "", y: []}),
+                data: () => ({ICAO: "", country: "", latitude: "", longitude: "" ,y: []}),
                 mounted() {
                     this.getFlights();
                 },
@@ -265,7 +271,7 @@
                     list: function(){
                         var list = [];
                         for (var i = 0; i < this.y.length; i ++){
-                            list.push({ICAO: this.y[i]['longitude'], x: this.y[i]['latitude']});
+                            list.push({ICAO: this.y[i]['icao24'], country: this.y[i]['origin_country'], latitude: this.y[i]['latitude'], longitude: this.y[i]['longitude']});
                         }
                         return list;
                     },
