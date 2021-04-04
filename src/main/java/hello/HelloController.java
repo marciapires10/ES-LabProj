@@ -95,7 +95,7 @@ public class HelloController {
         mapper.writeValue(new File(coordinates_file_path), states_coordinates);
 
         model.addAttribute("eventName", "States");
-        return "home";
+        return "index";
     }
 
     @GetMapping("/aircrafts")

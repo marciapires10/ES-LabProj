@@ -3,9 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>Creative - Start Bootstrap Theme</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
+        <title>Lab Proj</title>
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
         <!-- Google fonts-->
@@ -15,19 +13,22 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        <!-- Mapbox -->
+        <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
     </head>
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
             <div class="container">
-                <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#page-top">Lab Proj</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#tableF">Flight Info</a></li>
+                        <!--<li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#about">About</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#portfolio">Portfolio</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#contact">Contact</a></li>-->
                     </ul>
                 </div>
             </div>
@@ -35,7 +36,9 @@
         <!-- Masthead-->
         <header class="masthead">
             <div class="container h-100">
-                <div class="row h-100 align-items-center justify-content-center text-center">
+            </br>
+                <div id="map" class="map"></div>
+                <!-- <div class="row h-100 align-items-center justify-content-center text-center">
                     <div class="col-lg-10 align-self-end">
                         <h1 class="text-uppercase text-white font-weight-bold">Your Favorite Source of Free Bootstrap Themes</h1>
                         <hr class="divider my-4" />
@@ -44,11 +47,11 @@
                         <p class="text-white-75 font-weight-light mb-5">Start Bootstrap can help you build better websites using the Bootstrap framework! Just download a theme and start customizing, no strings attached!</p>
                         <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
                     </div>
-                </div>
+                </div> -->
             </div>
         </header>
         <!-- About-->
-        <section class="page-section bg-primary" id="about">
+        <!-- <section class="page-section bg-primary" id="about">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
@@ -59,13 +62,13 @@
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Services-->
-        <section class="page-section" id="services">
-            <div class="container">
-                <h2 class="text-center mt-0">At Your Service</h2>
+        </section> -->
+        <!-- Table of all real time flights-->
+        <section class="page-section" id="tableF">
+            <div class="container-tf" style="width: 1040px; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; background-color: white;">
+                <h2 class="text-center mt-0">Information about the current flights above <b>Spain</b></h2>
                 <hr class="divider my-4" />
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-lg-3 col-md-6 text-center">
                         <div class="mt-5">
                             <i class="fas fa-4x fa-gem text-primary mb-4"></i>
@@ -73,32 +76,28 @@
                             <p class="text-muted mb-0">Our themes are updated regularly to keep them bug free!</p>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="mt-5">
-                            <i class="fas fa-4x fa-laptop-code text-primary mb-4"></i>
-                            <h3 class="h4 mb-2">Up to Date</h3>
-                            <p class="text-muted mb-0">All dependencies are kept current to keep things fresh.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="mt-5">
-                            <i class="fas fa-4x fa-globe text-primary mb-4"></i>
-                            <h3 class="h4 mb-2">Ready to Publish</h3>
-                            <p class="text-muted mb-0">You can use this design as is, or you can make changes!</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="mt-5">
-                            <i class="fas fa-4x fa-heart text-primary mb-4"></i>
-                            <h3 class="h4 mb-2">Made with Love</h3>
-                            <p class="text-muted mb-0">Is it really open source if it's not made with love?</p>
-                        </div>
-                    </div>
-                </div>
+                </div> -->
+
+                <table class="table mt-5" id="table-flights">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">ICAO</th>
+                            <th scope="col">x</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(entry, i) in list" :key="i">
+                            <th scope="row">{{ ++i }}</th>
+                            <td>{{ entry.ICAO }}</td>
+                            <td>{{ entry.x }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
         <!-- Portfolio-->
-        <div id="portfolio">
+        <!-- <div id="portfolio">
             <div class="container-fluid p-0">
                 <div class="row no-gutters">
                     <div class="col-lg-4 col-sm-6">
@@ -157,16 +156,16 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Call to action-->
-        <section class="page-section bg-dark text-white">
+        <!-- <section class="page-section bg-dark text-white">
             <div class="container text-center">
                 <h2 class="mb-4">Free Download at Start Bootstrap!</h2>
                 <a class="btn btn-light btn-xl" href="https://startbootstrap.com/theme/creative/">Download Now!</a>
             </div>
-        </section>
+        </section> -->
         <!-- Contact-->
-        <section class="page-section" id="contact">
+        <!-- <section class="page-section" id="contact">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 text-center">
@@ -181,17 +180,110 @@
                         <div>+1 (555) 123-4567</div>
                     </div>
                     <div class="col-lg-4 mr-auto text-center">
-                        <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
+                        <i class="fas fa-envelope fa-3x mb-3 text-muted"></i> -->
                         <!-- Make sure to change the email address in BOTH the anchor text and the link target below!-->
-                        <a class="d-block" href="mailto:contact@yourwebsite.com">contact@yourwebsite.com</a>
+                      <!--  <a class="d-block" href="mailto:contact@yourwebsite.com">contact@yourwebsite.com</a>
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
         <!-- Footer-->
         <footer class="bg-light py-5">
             <div class="container"><div class="small text-center text-muted">Copyright © 2020 - Start Bootstrap</div></div>
         </footer>
+
+
+        <!-- include Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <script type="text/babel">
+
+            var map = new Vue({
+                el: "#map",
+                data: () => ({
+                    map: '',
+                    coords: [],
+                }),
+                mounted() {
+                    mapboxgl.accessToken = 'pk.eyJ1IjoibWFyY2lhcGlyZXMxMCIsImEiOiJjazh4dHNwbGowOTUwM25zMmMwcHZoa3R2In0.81CSLHUoUCfS3mVrSgqung';
+
+                    this.map = new mapboxgl.Map({
+                        container: 'map',
+                        'style': 'mapbox://styles/mapbox/dark-v10',
+                        center: [-3.7130, 40.2085],
+                        zoom: 5
+                    });
+
+                    // Zoom buttons
+                    const nav = new mapboxgl.NavigationControl();
+                    this.map.addControl(nav, "top-right");
+
+                    let scope = this.map;
+
+                    this.fetchCoords();
+
+                    var list = [];
+                    for (var i = 0; i < this.coords.length; i ++){
+                        list.push([this.y[i]['longitude'], this.y[i]['latitude']]);
+                    }
+
+                    console.log(list);
+                    
+                    // this.coords.features.forEach(function(marker) {
+                    //     var el = document.createElement('div');
+                    //     el.className = 'marker';
+                    //     el.style.backgroundImage = 'url(assets/plane.png)';
+                    //     el.style.width = '30px';
+                    //     el.style.height = '30px';
+                    //     el.style.backgroundSize = '100%';
+                    //     console.log("ola??");
+
+                    //     new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(scope);
+
+                    //     console.log("CHEGOU?");
+                    // });
+                    
+                },
+                methods: {
+                    fetchCoords(){
+                        axios.get('/coordinates').then(function(response){
+                            this.coords = response.data;
+                        }.bind(this));
+                    }
+                }
+            });
+    
+            var flights_table = new Vue({
+                el: "#table-flights",
+                data: () => ({ICAO: "", x: "", y: []}),
+                mounted() {
+                    this.getFlights();
+                },
+                computed: {
+                    list: function(){
+                        var list = [];
+                        for (var i = 0; i < this.y.length; i ++){
+                            list.push({ICAO: this.y[i]['longitude'], x: this.y[i]['latitude']});
+                        }
+                        return list;
+                    },
+                },
+                methods: {
+                    getFlights() {
+                        axios.get('/coordinates').then(function(response){
+                            this.y = response.data;
+                        }.bind(this));
+                    }
+                }
+            });
+        </script>
+
+
+
+
+
         <!-- Bootstrap core JS-->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
