@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
     <!-- Mapbox -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
@@ -36,6 +39,7 @@
     <!-- include Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script type="text/babel">
 
@@ -64,67 +68,107 @@
                 ]
             }
         });
+        
+        // var getCoords = new Vue({
+        //     el: "#root",
+        //     data : {
+        //         coords: []
+        //     },
+        //     mounted(){
+        //         this.fetchCoords();
+        //     },
+        //     methods: {
+        //         fetchCoords(){
+        //             axios.get("/aircrafts").then(function(response){
+        //                 this.coords = response.data;
+        //             }.bind(this));
+        //         }
+        //     }
+        // })
 
         var map = new Vue({
             el: "#map",
             data : {
-                map: ''
+                map: '',
+                coords: []
             },
             mounted(){
                 mapboxgl.accessToken = 'pk.eyJ1IjoibWFyY2lhcGlyZXMxMCIsImEiOiJjazh4dHNwbGowOTUwM25zMmMwcHZoa3R2In0.81CSLHUoUCfS3mVrSgqung';
 
                 this.map = new mapboxgl.Map({
                     container: 'map',
-                    'style': 'mapbox://styles/mapbox/dark-v10'
+                    'style': 'mapbox://styles/mapbox/dark-v10',
+                    center: [-65.017, -16.457],
+                    zoom: 2
                 });
 
                 // Long Lat limitations 
-                var sw = new mapboxgl.LngLat(-73.9876, 40.7661);
-                var ne = new mapboxgl.LngLat(-73.9397, 40.8002);
-                var llb = new mapboxgl.LngLatBounds(sw, ne);
+                // var sw = new mapboxgl.LngLat(-73.9876, 40.7661);
+                // var ne = new mapboxgl.LngLat(-73.9397, 40.8002);
+                // var llb = new mapboxgl.LngLatBounds(sw, ne);
 
-                this.map.fitBounds(llb);
+                // this.map.fitBounds(llb);
 
                 // Zoom buttons
                 const nav = new mapboxgl.NavigationControl();
                 this.map.addControl(nav, "top-right");
 
                 // Marker
-                const marker = new mapboxgl.Marker()
-                .setLngLat([-73.9885, 40.7900])
-                .addTo(this.map);
+                // const marker = new mapboxgl.Marker()
+                // .setLngLat([-73.9885, 40.7900])
+                // .addTo(this.map);
+                
 
-                // Still on test
-                // this.map.loadImage('static/assets/plane.png',
-                //     function (error, image) {
-                //         if(error) throw error;
-                //         this.map.addImage('plane', image);
-                //         this.map.addSource('point', {
-                //             'type': 'geojson',
-                //             'data': {
-                //                 'type': 'FeatureCollection',
-                //                 'features': [
-                //                     {
-                //                         'type': 'Feature',
-                //                         'geometry': {
-                //                             'type': 'Point',
-                //                             'coordinates': [0, 0]
-                //                         }
-                //                     }
-                //                 ]   
+                // var coords = {
+                //     'type': 'FeatureCollection',
+                //     'features': [
+                //         {
+                //             'type': 'Feature',
+                //             'properties': {},
+                //             'geometry': {
+                //                 'type': 'Point',
+                //                 'coordinates': [-66.324462890625, -16.024695711685304]
                 //             }
-                //         });
-                //         this.map.addLayer({
-                //             'id': 'points',
-                //             'type': 'symbol',
-                //             'source': 'point',
-                //             'layout': {
-                //                 'icon-image': 'plane',
-                //                 'icon-size': 0.25
+                //         },
+                //         {
+                //             'type': 'Feature',
+                //             'properties': {},
+                //             'geometry': {
+                //                 'type': 'Point',
+                //                 'coordinates': [-73.9885, 40.7900]
                 //             }
-                //         });
-                //     }
-                // );
+                //         }
+                //     ]
+                // };
+
+                let scope = this.map;
+                this.fetchCoords();
+
+                coords.features.forEach(function(marker) {
+                    var el = document.createElement('div');
+                    el.className = 'marker';
+                    el.style.backgroundImage = 'url(assets/plane.png)';
+                    el.style.width = '30px';
+                    el.style.height = '30px';
+                    el.style.backgroundSize = '100%';
+                    console.log("ola??");
+
+                    new mapboxgl.Marker(el).setLngLat(marker.geometry.coordinates).addTo(scope);
+
+                    console.log("CHEGOU?");
+                });
+                
+            },
+            methods: {
+                fetchCoords(){
+                    // axios.get("/aircrafts").then(function(response){
+                    //     this.coords = response.data;
+                    // }.bind(this));
+                    axios.get('/' + 'coords.geojson').then(response => {
+                        console.log(response.data);
+                        this.coords = response.data;
+                    })
+                }
             }
         });
 
