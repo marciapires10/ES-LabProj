@@ -11,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 // import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 // import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 // import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,6 +42,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Controller
 // @RestController
+@CrossOrigin(origins = "http://localhost:8080")
 public class HelloController {
 
     // private List<Integer> num = Arrays.asList(1, 2, 3, 4, 5);
@@ -155,11 +159,12 @@ public class HelloController {
         return "home";
     }
     
-    @RequestMapping(path = "/coordinates", method = RequestMethod.POST)
-    public String coordinates_file(Model model) throws IOException
+    @GetMapping("/coordinates")
+    @ResponseBody
+    public List<Coordinates> coordinates_file() throws JsonParseException, JsonMappingException, IOException
     {
         Object objects = mapper.readValue(new File(coordinates_file_path), Object.class);
         List<Coordinates> coordinates = mapper.convertValue(objects, List.class);
-        return coordinates.get(0).toString();
+        return coordinates;
     }
 }
