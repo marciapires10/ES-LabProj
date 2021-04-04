@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 // import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.RestController;
@@ -154,11 +155,11 @@ public class HelloController {
         return "home";
     }
     
-    @GetMapping("/coordinates")
-    public List<Coordinates> coordinates_file(Model model) throws IOException
+    @RequestMapping(path = "/coordinates", method = RequestMethod.POST)
+    public String coordinates_file(Model model) throws IOException
     {
         Object objects = mapper.readValue(new File(coordinates_file_path), Object.class);
         List<Coordinates> coordinates = mapper.convertValue(objects, List.class);
-        return coordinates;
+        return coordinates.get(0).toString();
     }
 }

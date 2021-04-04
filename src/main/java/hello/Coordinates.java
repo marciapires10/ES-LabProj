@@ -20,6 +20,10 @@ public class Coordinates {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
+    @Override
+    public String toString() {
+        return "Coordinates [latitude=" + latitude + ", longitude=" + longitude + "]";
+    }
+    
     
 }
