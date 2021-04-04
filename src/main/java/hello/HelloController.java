@@ -59,6 +59,7 @@ public class HelloController {
 
     private String states__file_path = "json_data/states.json";
     private String aircraft_file_path = "json_data/aircrafts.json";
+    private String coordinates_file_path = "json_data/coordinates.json";
 
     @GetMapping("/states")
     public String states(Model model) throws IOException
@@ -70,14 +71,22 @@ public class HelloController {
         StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
         state_info.Fill_States();
         List<String> states_str = new ArrayList<String>();
+
+        List<Coordinates> states_coordinates = new ArrayList<Coordinates>();  // Get list to write the coordinates JSON
         for(State state : state_info.getStateObj())
         {
+            Coordinates coordinates = new Coordinates(state.latitude, state.longitude);
+            states_coordinates.add(coordinates);
+
             logger.debug(state.toString());
             states_str.add(state.toString());
         }
 
+        
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         mapper.writeValue(new File(states__file_path), state_info);
+        logger.debug(states_coordinates);
+        mapper.writeValue(new File(coordinates_file_path), states_coordinates);
 
         model.addAttribute("eventName", "States");
         return "home";
