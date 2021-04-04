@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 // import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.RestController;
@@ -95,8 +96,7 @@ public class HelloController {
     @GetMapping("/aircrafts")
     public String aircraft(Model model) throws IOException
     {
-
-        
+       
         ResponseEntity<Object[]> response = parsingObject.parseObjects(aircraft_url);
         Object objects = response.getBody();
 
@@ -117,7 +117,7 @@ public class HelloController {
     @GetMapping("/aircrafts_file")
     public String aircraft_file(Model model) throws IOException
     {
-        Object objects = mapper.readValue(new File("Test.json"), Object.class);
+        Object objects = mapper.readValue(new File(aircraft_file_path), Object.class);
 
         Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
         List<String> aircrafts_str = new ArrayList<String>();
@@ -137,7 +137,7 @@ public class HelloController {
     public String states_files(Model model) throws IOException
     {
         
-        Object objects = mapper.readValue(new File("Test_states.json"), Object.class);
+        Object objects = mapper.readValue(new File(states__file_path), Object.class);
 
         StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
         List<String> states_str = new ArrayList<String>();
@@ -154,4 +154,11 @@ public class HelloController {
         return "home";
     }
     
+    @GetMapping("/coordinates")
+    public List<Coordinates> coordinates_file(Model model) throws IOException
+    {
+        Object objects = mapper.readValue(new File(coordinates_file_path), Object.class);
+        List<Coordinates> coordinates = mapper.convertValue(objects, List.class);
+        return coordinates;
+    }
 }
