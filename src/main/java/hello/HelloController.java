@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -63,9 +64,9 @@ public class HelloController {
     private String test_url = "https://jsonplaceholder.typicode.com/todos/1";
     private String aircraft_url = "https://opensky-network.org/api/flights/aircraft?icao24=3c675a&begin=1517184000&end=1517270400";
 
-    private String states__file_path = "json_data/states.json";
-    private String aircraft_file_path = "json_data/aircrafts.json";
-    private String coordinates_file_path = "json_data/coordinates.json";
+    private String states__file_path = "docker.json";
+    private String aircraft_file_path = "aircrafts.json";
+    private String coordinates_file_path = "coordinates.json";
 
     @GetMapping("/")
     public String states(Model model) throws IOException
@@ -118,7 +119,7 @@ public class HelloController {
         model.addAttribute("eventName", "States");
         return "home";
     }
-    
+
     @GetMapping("/aircrafts")
     @ResponseBody
     public String aircraft(Model model) throws IOException
@@ -163,11 +164,19 @@ public class HelloController {
     
     @GetMapping("/coordinates")
     @ResponseBody
-    public List<State> coordinates_file() throws JsonParseException, JsonMappingException, IOException
+    public List<State> coordinates_file()
     {
-        Object objects = mapper.readValue(new File(states__file_path), Object.class);
-        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
-
+        StateInfo state_info;
+        Object objects;
+        try {
+            objects = mapper.readValue(new File(states__file_path), Object.class);
+            state_info = mapper.convertValue(objects, StateInfo.class);
+        } catch (IOException e) {
+            ResponseEntity<Object> response = parsingObject.parseObject(states_url);
+            objects = response.getBody();
+            state_info = mapper.convertValue(objects, StateInfo.class);
+            state_info.Fill_States();
+        }
         return state_info.getStateObj();
     }
 }
