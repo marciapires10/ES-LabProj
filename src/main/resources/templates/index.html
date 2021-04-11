@@ -209,6 +209,8 @@
                 data: () => ({
                     map: '',
                     coords: [],
+                    timer: '',
+                    currentMarkers : [],
                 }),
                 mounted() {
                     mapboxgl.accessToken = 'pk.eyJ1IjoibWFyY2lhcGlyZXMxMCIsImEiOiJjazh4dHNwbGowOTUwM25zMmMwcHZoa3R2In0.81CSLHUoUCfS3mVrSgqung';
@@ -224,9 +226,8 @@
                     const nav = new mapboxgl.NavigationControl();
                     this.map.addControl(nav, "top-right");
 
-                    let scope = this.map;
-
-                    this.fetchCoords(scope);
+                    this.fetchCoords();
+                    this.timer = setInterval(this.fetchCoords, 5000);
 
                     var list = [];
                     for (var i = 0; i < this.coords.length; i ++){
@@ -236,10 +237,18 @@
                     
                 },
                 methods: {
-                    fetchCoords(scope){
+                    fetchCoords(){
                     console.log("Axious")
                     axios.get("/coordinates").then(function(response){
                         var coords_list = response.data;
+                        var scope = this.map;
+                        console.log("LENGTH: ")
+                        console.log(this.currentMarkers.length)
+                        for (var i = 0; i < this.currentMarkers.length; i++) {
+                            console.log("Removing")
+                            this.currentMarkers[i].remove();
+                        }
+                        this.currentMarkers.length = 0;
                         for(var i = 0; i < coords_list.length; i ++)
                         {
                             this.coords.push([coords_list[i]['longitude'], coords_list[i]['latitude']])
@@ -253,9 +262,12 @@
                             el.style.width = '30px';
                             el.style.height = '30px';
                             el.style.backgroundSize = '100%';
-                            new mapboxgl.Marker(el).setLngLat(c[index]).addTo(scope);
+                            var _marker = new mapboxgl.Marker(el)
+                                .setLngLat(c[index])
+                                .addTo(scope);
+                            this.currentMarkers.push(_marker)
                             index += 1
-                    });
+                    }.bind(this));
                     }.bind(this));
                 }
                 }
@@ -263,9 +275,10 @@
     
             var flights_table = new Vue({
                 el: "#table-flights",
-                data: () => ({ICAO: "", country: "", latitude: "", longitude: "" ,y: []}),
+                data: () => ({ICAO: "", country: "", latitude: "", longitude: "" ,y: [], timer : ''}),
                 mounted() {
                     this.getFlights();
+                    this.timer = setInterval(this.getFlights, 30000);
                 },
                 computed: {
                     list: function(){

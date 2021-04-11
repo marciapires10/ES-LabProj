@@ -71,30 +71,6 @@ public class HelloController {
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
-        
-        ResponseEntity<Object> response = parsingObject.parseObject(states_url);
-        Object objects = response.getBody();
-
-        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
-        state_info.Fill_States();
-        List<String> states_str = new ArrayList<String>();
-
-        List<Coordinates> states_coordinates = new ArrayList<Coordinates>();  // Get list to write the coordinates JSON
-        for(State state : state_info.getStateObj())
-        {
-            Coordinates coordinates = new Coordinates(state.latitude, state.longitude);
-            states_coordinates.add(coordinates);
-
-            logger.debug(state.toString());
-            states_str.add(state.toString());
-        }
-
-        
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File(states__file_path), state_info);
-        logger.debug(states_coordinates);
-        mapper.writeValue(new File(coordinates_file_path), states_coordinates);
-
         model.addAttribute("eventName", "States");
         return "index";
     }
@@ -109,7 +85,6 @@ public class HelloController {
         List<String> states_str = new ArrayList<String>();
         for(State state : state_info.getStateObj())
         {
-            logger.debug(state);
             states_str.add(state.toString());
         }
 
@@ -134,7 +109,6 @@ public class HelloController {
         {
             aircrafts_str.add(aircraft.toString());
         }
-        logger.debug(aircrafts);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         mapper.writeValue(new File(aircraft_file_path), aircrafts);
 
@@ -166,17 +140,14 @@ public class HelloController {
     @ResponseBody
     public List<State> coordinates_file()
     {
-        StateInfo state_info;
-        Object objects;
-        try {
-            objects = mapper.readValue(new File(states__file_path), Object.class);
-            state_info = mapper.convertValue(objects, StateInfo.class);
-        } catch (IOException e) {
-            ResponseEntity<Object> response = parsingObject.parseObject(states_url);
-            objects = response.getBody();
-            state_info = mapper.convertValue(objects, StateInfo.class);
-            state_info.Fill_States();
-        }
+
+        ResponseEntity<Object> response = parsingObject.parseObject(states_url);
+        Object objects = response.getBody();
+
+        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
+        state_info.Fill_States();
+
+        logger.debug("READING COORDINATES");
         return state_info.getStateObj();
     }
 }
