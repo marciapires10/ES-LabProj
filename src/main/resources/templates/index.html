@@ -242,13 +242,11 @@
                     axios.get("/coordinates").then(function(response){
                         var coords_list = response.data;
                         var scope = this.map;
-                        console.log("LENGTH: ")
-                        console.log(this.currentMarkers.length)
                         for (var i = 0; i < this.currentMarkers.length; i++) {
-                            console.log("Removing")
                             this.currentMarkers[i].remove();
                         }
-                        this.currentMarkers.length = 0;
+                        this.currentMarkers = []
+                        this.coords = []
                         for(var i = 0; i < coords_list.length; i ++)
                         {
                             this.coords.push([coords_list[i]['longitude'], coords_list[i]['latitude']])
