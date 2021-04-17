@@ -164,6 +164,9 @@ public class State      // Mudar isto tudo para private
         this.flightID = flightID;
     }
 
-    
+    public Coordinates getCoordinates()
+    {
+        return new Coordinates(this.latitude, this.longitude);
+    }
 
 }

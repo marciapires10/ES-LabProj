@@ -1,5 +1,9 @@
 package com.example.controller;
 
+
+@JsonIgnoreProperties
+@Entity
+@Table(name = "Coordinates")
 public class Coordinates {
     private double latitude;
     private double longitude;

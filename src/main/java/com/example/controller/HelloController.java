@@ -56,6 +56,8 @@ public class HelloController {
     private ParsingObject parsingObject;
     @Autowired
     StateRepository stateRepository;
+    @Autowired
+    private CoordinatesDaoImp coordinatesDao;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -152,10 +154,19 @@ public class HelloController {
         for(State state : state_info.getStateObj())
         {
             stateRepository.save(state);
+            coordinatesDao.insertCoordinates(state.getCoordinates());
         }
 
         return state_info.getStateObj();
 
+    }
+
+    @GetMapping("/get_coordinares_bd")
+    @ResponseBody
+    public List<Coordinates> get_coordinares_bd()
+    {
+
+        return coordinatesDao.getAllCoordinates();
     }
 
     @GetMapping("/hist")
