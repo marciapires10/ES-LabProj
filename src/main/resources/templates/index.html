@@ -245,27 +245,37 @@
                         for (var i = 0; i < this.currentMarkers.length; i++) {
                             this.currentMarkers[i].remove();
                         }
-                        this.currentMarkers = []
-                        this.coords = []
+                        this.currentMarkers = [];
+                        this.coords = [];
                         for(var i = 0; i < coords_list.length; i ++)
                         {
-                            this.coords.push([coords_list[i]['longitude'], coords_list[i]['latitude']])
+                            this.coords.push([coords_list[i]['longitude'], coords_list[i]['latitude']]);
                         }
-                        var c = this.coords
+
+                        var c = this.coords;
+                        var i = this.info;
+
                         var index = 0
                         this.coords.forEach(function(marker) {
                             var el = document.createElement('div');
                             el.className = 'marker';
                             el.style.backgroundImage = 'url(assets/plane.png)';
-                            el.style.width = '30px';
-                            el.style.height = '30px';
+                            el.style.width = '20px';
+                            el.style.height = '20px';
                             el.style.backgroundSize = '100%';
                             var _marker = new mapboxgl.Marker(el)
                                 .setLngLat(c[index])
                                 .addTo(scope);
                             this.currentMarkers.push(_marker)
+
+                            el.addEventListener('click', () => {
+                               // var icao = c[index];
+                                console.log("Oi");
+                                alert("oi");
+                            });
+
                             index += 1
-                    }.bind(this));
+                        }.bind(this));
                     }.bind(this));
                 }
                 }
@@ -289,7 +299,7 @@
                 },
                 methods: {
                     getFlights() {
-                        axios.get('/coordinates').then(function(response){
+                        axios.get('/hist').then(function(response){
                             this.y = response.data;
                         }.bind(this));
                     }
