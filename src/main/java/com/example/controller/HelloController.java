@@ -70,6 +70,8 @@ public class HelloController {
     private String aircraft_file_path = "aircrafts.json";
     private String coordinates_file_path = "coordinates.json";
 
+    private List<State> states;
+
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
@@ -140,7 +142,8 @@ public class HelloController {
     
     @GetMapping("/coordinates")
     @ResponseBody
-    public List<State> coordinates_file()
+    @Scheduled(fixedRate = 5000)
+    public void coordinates()
     {
 
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
@@ -157,16 +160,15 @@ public class HelloController {
             coordinatesRepository.save(state.getCoordinates());
         }
 
-        return state_info.getStateObj();
-
+        this.states = state_info.getStateObj();
     }
 
-    @GetMapping("/get_coordinares_bd")
+    @GetMapping("/get_coordinates")
     @ResponseBody
-    public List<Coordinates> get_coordinares_bd()
+    public List<State> get_coordinate()
     {
 
-        return (List<Coordinates>)coordinatesRepository.findAll();
+        return this.states;
     }
 
     @GetMapping("/hist")

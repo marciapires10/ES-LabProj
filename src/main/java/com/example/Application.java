@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 // import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
+@EnableScheduling
 // @RestController
 public class Application {
 
