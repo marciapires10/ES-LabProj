@@ -239,7 +239,7 @@
                 methods: {
                     fetchCoords(){
                     console.log("Axious")
-                    axios.get("/coordinates").then(function(response){
+                    axios.get("/get_coordinates").then(function(response){
                         var coords_list = response.data;
                         var scope = this.map;
                         for (var i = 0; i < this.currentMarkers.length; i++) {
