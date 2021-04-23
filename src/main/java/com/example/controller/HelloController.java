@@ -2,44 +2,20 @@ package com.example.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.plugins.util.ResolverUtil.Test;
-import org.attoparser.dom.INode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-// import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RestController;
-// import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
-
 import com.example.repository.*;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-// import com.fasterxml.jackson.core.JsonProcessingException;
-// import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -56,8 +32,6 @@ public class HelloController {
     private ParsingObject parsingObject;
     @Autowired
     StateRepository stateRepository;
-    @Autowired
-    CoordinatesRepository coordinatesRepository;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -70,29 +44,12 @@ public class HelloController {
     private String aircraft_file_path = "aircrafts.json";
     private String coordinates_file_path = "coordinates.json";
 
+    private List<State> states;
+    private String popularCountry;
+
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
-        model.addAttribute("eventName", "States");
-        return "index";
-    }
-
-    @GetMapping("/states_file")
-    public String states_files(Model model) throws IOException
-    {
-        
-        Object objects = mapper.readValue(new File(states__file_path), Object.class);
-
-        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
-        List<String> states_str = new ArrayList<String>();
-        for(State state : state_info.getStateObj())
-        {
-            states_str.add(state.toString());
-        }
-
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File(states__file_path), state_info);
-
         model.addAttribute("eventName", "States");
         return "index";
     }
@@ -117,30 +74,11 @@ public class HelloController {
         model.addAttribute("eventName", "Welelel");
         return "home";
     }
-
-    @GetMapping("/aircrafts_file")
-    @ResponseBody
-    public String aircraft_file(Model model) throws IOException
-    {
-        Object objects = mapper.readValue(new File(aircraft_file_path), Object.class);
-
-        Aircraft[] aircrafts = mapper.convertValue(objects, Aircraft[].class);
-        List<String> aircrafts_str = new ArrayList<String>();
-        for(Aircraft aircraft : aircrafts)
-        {
-            aircrafts_str.add(aircraft.toString());
-        }
-        
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.writeValue(new File(aircraft_file_path), aircrafts);
-
-        model.addAttribute("eventName", "Aircrafts");
-        return "home";
-    }
     
     @GetMapping("/coordinates")
     @ResponseBody
-    public List<State> coordinates_file()
+    @Scheduled(fixedRate = 5000)
+    public void coordinates()
     {
 
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
@@ -153,20 +91,27 @@ public class HelloController {
         
         for(State state : state_info.getStateObj())
         {
-            stateRepository.save(state);
-            coordinatesRepository.save(state.getCoordinates());
+            if(stateRepository.findByicao24(state.icao24).size() == 0)
+            {
+                stateRepository.save(state);
+            }
         }
 
-        return state_info.getStateObj();
-
+        this.states = state_info.getStateObj();
     }
 
-    @GetMapping("/get_coordinares_bd")
+    @GetMapping("/get_coordinates")
     @ResponseBody
-    public List<Coordinates> get_coordinares_bd()
+    public List<State> get_coordinates()
+    {
+        return this.states;
+    }
+    @GetMapping("/get_coordinates_bd")
+    @ResponseBody
+    public List<State> get_coordinates_bd()
     {
 
-        return (List<Coordinates>)coordinatesRepository.findAll();
+        return (List<State>)stateRepository.findAll();
     }
 
     @GetMapping("/hist")
@@ -174,35 +119,39 @@ public class HelloController {
     public List<State> historic()
     {
 
-        //ResponseEntity<Object> response = parsingObject.parseObject(states_url);
-        //Object objects = response.getBody();
-
-        //StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
-        //state_info.Fill_States();
-
-        // logger.debug("READING COORDINATES");
-        
-        // for(State state : state_info.getStateObj())
-        // {
-        //     stateRepository.save(state);
-        // }
         var list = (List<State>) stateRepository.findAll();
         return list;
 
     }
 
-    // @RequestMapping("/testBD")
-    // public String create(){
-    //     String userID = "";
-    //     try{
-    //         State st = new State();
-    //         stateRepository.save(st);
-    //         userID = String.valueOf(st.getIcao24());
+    @GetMapping("/popular_country")
+    @ResponseBody
+    @Scheduled(fixedRate = 5000)
+    public void PopularCountry()
+    {
+        String country = "Default";
+        int max_ocurrences = 0;
+        List<String> seen_countries = new ArrayList<String>();
+        for(State state : stateRepository.findAll())
+        {
+            if(!seen_countries.contains(state.origin_country))
+            {
+                seen_countries.add(state.origin_country);
+                int countries_found = stateRepository.findByorigin_country(state.origin_country).size();
+                if(countries_found > max_ocurrences)
+                {
+                    country = state.origin_country;
+                    max_ocurrences = countries_found;
+                }
+            }
+        }
+        this.popularCountry = country;
+    }
 
-    //     }
-    //     catch (Exception ex){
-    //         return "Error";
-    //     }
-    //     return "State successfully created";
-    // }
+    @GetMapping("/get_popular_country")
+    @ResponseBody
+    public String getPopularCountry()
+    {
+        return this.popularCountry;
+    }
 }

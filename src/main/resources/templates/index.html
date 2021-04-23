@@ -65,7 +65,7 @@
         </section> -->
         <!-- Table of all real time flights-->
         <section class="page-section" id="tableF">
-            <div class="container-tf" style="width: 1040px; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; background-color: white;">
+            <div id="table-flights" class="container-tf" style="width: 1040px; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; background-color: white;">
                 <h2 class="text-center mt-0">Information about the current flights above <b>Spain</b></h2>
                 <hr class="divider my-4" />
                 <!-- <div class="row">
@@ -77,8 +77,8 @@
                         </div>
                     </div>
                 </div> -->
-
-                <table class="table mt-5" id="table-flights">
+                <p><span v-html="getCountry"></span></p>
+                <table class="table mt-5">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -227,7 +227,7 @@
                     this.map.addControl(nav, "top-right");
 
                     this.fetchCoords();
-                    this.timer = setInterval(this.fetchCoords, 5000);
+                    this.timer = setInterval(this.fetchCoords, 15000);
 
                     var list = [];
                     for (var i = 0; i < this.coords.length; i ++){
@@ -239,7 +239,7 @@
                 methods: {
                     fetchCoords(){
                     console.log("Axious")
-                    axios.get("/coordinates").then(function(response){
+                    axios.get("/get_coordinates").then(function(response){
                         var coords_list = response.data;
                         var scope = this.map;
                         for (var i = 0; i < this.currentMarkers.length; i++) {
@@ -283,10 +283,11 @@
     
             var flights_table = new Vue({
                 el: "#table-flights",
-                data: () => ({ICAO: "", country: "", latitude: "", longitude: "" ,y: [], timer : ''}),
+                data: () => ({ICAO: "", country: "", latitude: "", longitude: "" ,y: [], timer : '', timer2 : '', origin_country : ''}),
                 mounted() {
                     this.getFlights();
                     this.timer = setInterval(this.getFlights, 30000);
+                    this.timer2 = setInterval(this.getPopularCountry, 30000)
                 },
                 computed: {
                     list: function(){
@@ -296,11 +297,20 @@
                         }
                         return list;
                     },
+                    getCountry: function()
+                    {
+                        return `<h3> The most popular country is ` + this.origin_country + `</h3>`;
+                    }
                 },
                 methods: {
                     getFlights() {
                         axios.get('/hist').then(function(response){
                             this.y = response.data;
+                        }.bind(this));
+                    },
+                    getPopularCountry() {
+                        axios.get('/popular_country').then(function(response){
+                            this.origin_country = response.data;
                         }.bind(this));
                     }
                 }
