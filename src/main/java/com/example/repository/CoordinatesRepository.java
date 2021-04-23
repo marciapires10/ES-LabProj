@@ -5,7 +5,7 @@ import com.example.controller.*;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CoordinatesRepository extends JpaRepository<Coordinates, Long> {
+public interface CoordinatesRepository extends JpaRepository<State, Long> {
 
     List<Coordinates> findAll();
 

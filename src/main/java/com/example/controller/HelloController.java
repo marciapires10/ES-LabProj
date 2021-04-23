@@ -42,8 +42,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 // import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.scheduling.annotation.Scheduled;
-
 
 @Controller
 // @RestController
@@ -71,8 +69,6 @@ public class HelloController {
     private String states__file_path = "docker.json";
     private String aircraft_file_path = "aircrafts.json";
     private String coordinates_file_path = "coordinates.json";
-
-    private List<State> states;
 
     @GetMapping("/")
     public String states(Model model) throws IOException
@@ -144,8 +140,7 @@ public class HelloController {
     
     @GetMapping("/coordinates")
     @ResponseBody
-    @Scheduled(fixedRate = 5000)
-    public void coordinates()
+    public List<State> coordinates_file()
     {
 
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
@@ -162,15 +157,16 @@ public class HelloController {
             coordinatesRepository.save(state.getCoordinates());
         }
 
-        this.states = state_info.getStateObj();
+        return state_info.getStateObj();
+
     }
 
-    @GetMapping("/get_coordinates")
+    @GetMapping("/get_coordinares_bd")
     @ResponseBody
-    public List<State> get_coordinate()
+    public List<Coordinates> get_coordinares_bd()
     {
 
-        return this.states;
+        return (List<Coordinates>)coordinatesRepository.findAll();
     }
 
     @GetMapping("/hist")
