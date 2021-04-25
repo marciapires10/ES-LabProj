@@ -3,17 +3,22 @@ package com.example.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.context.annotation.Bean;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import com.example.repository.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +55,10 @@ public class HelloController {
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
+        logger.debug("MAIN DEBUG");
+        logger.warn("MAIN WARN");
+        logger.error("MAIN ERROR");
+        logger.info("MAIN INFO");
         model.addAttribute("eventName", "States");
         return "index";
     }
@@ -80,15 +89,12 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void coordinates()
     {
-
+        logger.info("Getting information from planes.");
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
         Object objects = response.getBody();
 
         StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
-        state_info.Fill_States();
-
-        logger.debug("READING COORDINATES");
-        
+        state_info.Fill_States();        
         for(State state : state_info.getStateObj())
         {
             if(stateRepository.findByicao24(state.icao24).size() == 0)
@@ -129,6 +135,7 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void PopularCountry()
     {
+        logger.info("Calculating the most popular country.");
         String country = "Default";
         int max_ocurrences = 0;
         List<String> seen_countries = new ArrayList<String>();
@@ -154,4 +161,12 @@ public class HelloController {
     {
         return this.popularCountry;
     }
+
+    // @RequestMapping("/test_kafka")
+    // @Scheduled(fixedRate = 5000)
+    // public ResponseEntity<String> testKafka() throws URISyntaxException
+    // {
+    //     URI URI = new URI("/kafka/publish/?message='Hello");
+    //     return (ResponseEntity<String>) ResponseEntity.created(URI);
+    // }
 }
