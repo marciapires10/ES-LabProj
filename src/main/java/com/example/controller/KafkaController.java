@@ -48,8 +48,8 @@ public class KafkaController {
         return "Message: '" + message + "'' sent";
     }
 
-    public List<LogsClass> getLogs()
-    {
-        return consumer.getLogs();
-    }
+    // public List<LogsClass> getLogs()
+    // {
+    //     return consumer.getLogs();
+    // }
 }

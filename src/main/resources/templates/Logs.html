@@ -32,36 +32,39 @@
             </div>
         </nav>
         <!-- Masthead-->
-        <header class="masthead">
+        <!-- <header class="masthead">
             <div class="container h-100">
-            </br>
+            </br> -->
         <section class="page-section" id="tableF">
             <div class="container-tf" style="width: 1040px; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; background-color: white;">
                 <h2 class="text-center mt-0"><b>Logs</b></h2>
                 <hr class="divider my-4" />
-
-                <table class="table mt-5" id="table-logs">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Message</th>
-                            <th scope="col">Topic</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(entry, i) in list" :key="i">
-                            <th scope="row">{{ ++i }}</th>
-                            <td>{{ entry.date }}</td>
-                            <td>{{ entry.message }}</td>
-                            <td>{{ entry.topic }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="height: 600px; overflow: auto;">
+                    <table class="table mt-5" id="table-logs">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Topic</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(entry, i) in list" :key="i">
+                                <th scope="row">{{ ++i }}</th>
+                                <td>{{ entry.date }}</td>
+                                <td>{{ entry.message }}</td>
+                                <td>{{ entry.topic }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
         <footer class="bg-light py-5">
             <div class="container"><div class="small text-center text-muted">Copyright © 2020 - Start Bootstrap</div></div>
+            <div class="container"><div class="small text-center text-muted">Márcia Pires (88747) and Tomás Martins (89286) for Lab Project</div></div>
+
         </footer>
 
 

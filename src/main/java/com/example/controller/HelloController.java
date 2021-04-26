@@ -53,12 +53,14 @@ public class HelloController {
 
     private List<State> states;
     private String popularCountry = "Default";
+    private int nFlights = 0;
+    private double velocity = 0; 
 
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
         // kafkaController.sendMessageToKafkaTopic("MAIN MAIN MAIN MAIN");
-        this.popularCountry = "Default teste";
+        this.popularCountry = "calculating...";
         model.addAttribute("test", this.popularCountry);
         // model.addAttribute("eventName", "States");
         return "index";
@@ -81,7 +83,6 @@ public class HelloController {
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         mapper.writeValue(new File(aircraft_file_path), aircrafts);
 
-        model.addAttribute("eventName", "Welelel");
         return "home";
     }
     
@@ -90,7 +91,7 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void coordinates()
     {
-        kafkaController.sendMessageToStates("Getting information from planes.");
+        //kafkaController.sendMessageToStates("Getting information from planes.");
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
         Object objects = response.getBody();
 
@@ -101,7 +102,7 @@ public class HelloController {
             if(stateRepository.findByicao24(state.icao24).size() == 0)
             {
                 stateRepository.save(state);
-                kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- is now flying over Spain.");
+               // kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- is now flying over Spain.");
             }
         }
 
@@ -125,11 +126,11 @@ public class HelloController {
             {
                 if(!stateRepository.findByicao24(state.icao24).get(0).on_ground && state.on_ground)
                 {
-                    kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has landed.");
+                    //kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has landed.");
                 }
                 else if(stateRepository.findByicao24(state.icao24).get(0).on_ground && !state.on_ground)
                 {
-                    kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has departed.");
+                    //kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has departed.");
                 }
             }
         }
@@ -155,6 +156,7 @@ public class HelloController {
     {
 
         var list = (List<State>) stateRepository.findAll();
+        this.nFlights = list.size();
         return list;
 
     }
@@ -164,13 +166,13 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void PopularCountry()
     {
-        kafkaController.sendMessageToStates("Calculating the most popular country.");
+        //kafkaController.sendMessageToStates("Calculating the most popular country.");
         String country = "Default";
         int max_ocurrences = 0;
         List<String> seen_countries = new ArrayList<String>();
         for(State state : stateRepository.findAll())
         {
-            if(!seen_countries.contains(state.origin_country))
+            if(!seen_countries.contains(state.origin_country) && state.origin_country.compareTo("Spain") != 0)
             {
                 seen_countries.add(state.origin_country);
                 int countries_found = stateRepository.findByorigin_country(state.origin_country).size();
@@ -189,8 +191,59 @@ public class HelloController {
     public String getPopularCountry()
     {
         String pop_country = "Most popular country -> " + this.popularCountry;
-        kafkaController.sendMessageToStates(pop_country);
+        //kafkaController.sendMessageToStates(pop_country);
         return this.popularCountry;
+    }
+
+    @GetMapping("/get_num_flights")
+    @ResponseBody
+    public int getNumFlights(){
+        return this.nFlights;
+    }
+
+    // @GetMapping("/logs")
+    // @ResponseBody
+    // public List<LogsClass> logs()
+    // {
+    //     return kafkaController.getLogs();
+    // }
+
+    @GetMapping("/logs_page")
+    public String logs_page(Model model) throws IOException
+    {
+        // kafkaController.sendMessageToKafkaTopic("MAIN MAIN MAIN MAIN");
+        this.popularCountry = "Default teste";
+        // model.addAttribute("test", this.popularCountry);
+        // model.addAttribute("eventName", "States");
+        return "Logs";
+    }
+
+    @GetMapping("/medium_velocity")
+    @ResponseBody
+    @Scheduled(fixedRate = 5000)
+    public void MediumVelocity()
+    {
+        //kafkaController.sendMessageToStates("Calculating the medium velocity.");
+        double m_velocity = 0;
+        List<State> states = stateRepository.findAll();
+        for(State state : states)
+        {
+            if(state.velocity != 0)
+            {
+                m_velocity += Math.abs(state.velocity);
+            }
+        }
+        m_velocity = m_velocity/states.size() ;
+        this.velocity = m_velocity;
+    }
+
+    @GetMapping("/get_medium_velocity")
+    @ResponseBody
+    public int getMediumVelocity()
+    {
+        String velocity_str = "The medium velocity of the current planes is -> " + this.velocity;
+        //kafkaController.sendMessageToStates(velocity_str);
+        return (int) this.velocity;
     }
 
 }
