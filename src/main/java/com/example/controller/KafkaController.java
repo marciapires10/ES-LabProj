@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,12 @@ public class KafkaController {
     private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
     
     private final ProducerClass producer;
+    private final ConsumerClass consumer;
 
     // @Autowired
-    public KafkaController(ProducerClass producer) {
+    public KafkaController(ProducerClass producer, ConsumerClass consumer) {
         this.producer = producer;
+        this.consumer = consumer;
     }
 
      // Different topics
@@ -44,4 +48,8 @@ public class KafkaController {
         return "Message: '" + message + "'' sent";
     }
 
+    public List<LogsClass> getLogs()
+    {
+        return consumer.getLogs();
+    }
 }
