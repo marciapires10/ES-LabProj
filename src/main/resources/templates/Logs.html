@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Lab Proj</title>
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic" rel="stylesheet" type="text/css" />
+        <!-- Third party plugin CSS-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Mapbox -->
+        <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+            <div class="container">
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto my-2 my-lg-0">
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="/">Lab Proj</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="/">Flight Info</a></li>
+                        <li class="nav-item"><a class="navbar-brand js-scroll-trigger" href="#page-top">Logs</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container h-100">
+            </br>
+        <section class="page-section" id="tableF">
+            <div class="container-tf" style="width: 1040px; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; background-color: white;">
+                <h2 class="text-center mt-0"><b>Logs</b></h2>
+                <hr class="divider my-4" />
+
+                <table class="table mt-5" id="table-logs">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Topic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(entry, i) in list" :key="i">
+                            <th scope="row">{{ ++i }}</th>
+                            <td>{{ entry.date }}</td>
+                            <td>{{ entry.message }}</td>
+                            <td>{{ entry.topic }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <footer class="bg-light py-5">
+            <div class="container"><div class="small text-center text-muted">Copyright © 2020 - Start Bootstrap</div></div>
+        </footer>
+
+
+        <!-- include Vue.js -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <script type="text/babel">
+    
+            var logs_table = new Vue({
+                el: "#table-logs",
+                data: () => ({date: "", message: "", topic: "",y: [], timer : ''}),
+                mounted() {
+                    this.getLogs();
+                    this.timer = setInterval(this.getLogs, 5000);
+                },
+                computed: {
+                    list: function(){
+                        var list = [];
+                        for (var i = 0; i < this.y.length; i ++){
+                            list.push({date: this.y[i]['date'], message: this.y[i]['message'], topic: this.y[i]['topic']});
+                        }
+                        return list;
+                    },
+                },
+                methods: {
+                    getLogs() {
+                        axios.get('/logs').then(function(response){
+                            this.y = response.data;
+                        }.bind(this));
+                    }
+                }
+            });
+        </script>
+
+
+
+
+
+        <!-- Bootstrap core JS-->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
