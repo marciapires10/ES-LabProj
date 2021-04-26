@@ -37,6 +37,8 @@ public class HelloController {
     private ParsingObject parsingObject;
     @Autowired
     StateRepository stateRepository;
+    @Autowired
+    KafkaController kafkaController;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -50,16 +52,15 @@ public class HelloController {
     private String coordinates_file_path = "coordinates.json";
 
     private List<State> states;
-    private String popularCountry;
+    private String popularCountry = "Default";
 
     @GetMapping("/")
     public String states(Model model) throws IOException
     {
-        logger.debug("MAIN DEBUG");
-        logger.warn("MAIN WARN");
-        logger.error("MAIN ERROR");
-        logger.info("MAIN INFO");
-        model.addAttribute("eventName", "States");
+        // kafkaController.sendMessageToKafkaTopic("MAIN MAIN MAIN MAIN");
+        this.popularCountry = "Default teste";
+        model.addAttribute("test", this.popularCountry);
+        // model.addAttribute("eventName", "States");
         return "index";
     }
 
@@ -89,7 +90,7 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void coordinates()
     {
-        logger.info("Getting information from planes.");
+        kafkaController.sendMessageToStates("Getting information from planes.");
         ResponseEntity<Object> response = parsingObject.parseObject(states_url);
         Object objects = response.getBody();
 
@@ -100,10 +101,38 @@ public class HelloController {
             if(stateRepository.findByicao24(state.icao24).size() == 0)
             {
                 stateRepository.save(state);
+                kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- is now flying over Spain.");
             }
         }
 
         this.states = state_info.getStateObj();
+    }
+
+    
+    @GetMapping("/check_landing_event")
+    @ResponseBody
+    @Scheduled(fixedRate = 5000)
+    public void check_landings_event()
+    {
+        ResponseEntity<Object> response = parsingObject.parseObject(states_url);
+        Object objects = response.getBody();
+
+        StateInfo state_info = mapper.convertValue(objects, StateInfo.class);
+        state_info.Fill_States();        
+        for(State state : state_info.getStateObj())
+        {
+            if(stateRepository.findByicao24(state.icao24).size() == 1)
+            {
+                if(!stateRepository.findByicao24(state.icao24).get(0).on_ground && state.on_ground)
+                {
+                    kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has landed.");
+                }
+                else if(stateRepository.findByicao24(state.icao24).get(0).on_ground && !state.on_ground)
+                {
+                    kafkaController.sendMessageToAlerts(" The plane -> " + state.icao24 + " <- has departed.");
+                }
+            }
+        }
     }
 
     @GetMapping("/get_coordinates")
@@ -135,7 +164,7 @@ public class HelloController {
     @Scheduled(fixedRate = 5000)
     public void PopularCountry()
     {
-        logger.info("Calculating the most popular country.");
+        kafkaController.sendMessageToStates("Calculating the most popular country.");
         String country = "Default";
         int max_ocurrences = 0;
         List<String> seen_countries = new ArrayList<String>();
@@ -159,14 +188,9 @@ public class HelloController {
     @ResponseBody
     public String getPopularCountry()
     {
+        String pop_country = "Most popular country -> " + this.popularCountry;
+        kafkaController.sendMessageToStates(pop_country);
         return this.popularCountry;
     }
 
-    // @RequestMapping("/test_kafka")
-    // @Scheduled(fixedRate = 5000)
-    // public ResponseEntity<String> testKafka() throws URISyntaxException
-    // {
-    //     URI URI = new URI("/kafka/publish/?message='Hello");
-    //     return (ResponseEntity<String>) ResponseEntity.created(URI);
-    // }
 }
